@@ -1,0 +1,509 @@
+#############################################
+#```````````````````````````````````````````#
+#```````````````Xeon`Zolt```````````````````#
+#``````````xeon.harsh@gmail.com`````````````#
+#```````````````````````````````````````````#
+#############################################
+
+####################
+# i3-gaps settings #
+####################
+hide_edge_borders both
+for_window [class="^.*"] border pixel 1
+gaps inner 7
+gaps outer 1
+
+#############
+# Variables #
+#############
+
+set $mod Mod4
+set $alt Mod1
+set $i3 /home/xeon/.config/i3
+set $scripts /home/xeon/.config/i3/scripts
+set $nsi --no-startup-id
+set $r --release
+set $w --whole-window
+set $term terminal
+workspace_auto_back_and_forth yes
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
+
+# Compton is for composite, change the following line if you use xcompmgr or whatever
+exec --no-startup-id compton
+
+#I use Firefox as default browser
+set $browser firefox-nightly
+
+##############
+# auto start #
+##############
+exec $nsi nitrogen --restore &
+exec $nsi compton --backend glx --paint-on-overlay --vsync opengl-mswc -b &
+exec $nsi /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+exec $nsi dunst &
+exec $nsi thunar --daemon &
+exec $nsi udiskie -aNqs -f thunar &
+exec $nsi nm-applet
+exec $nsi pulseaudio --start &
+exec $nsi rofi -d &
+exec $nsi xfce4-power-manager &
+exec albert &
+#exec $nsi remind -z -k'notify-send -a "Warning!" -u critical %s &' ~/.reminders &
+exec $nsi mpd ~/.mpd/mpd.conf &
+#exec $nsi xflux -l 40.6 -g 17.0 -k 2000 &
+#exec $nsi dropbox &
+#exec $nsi sleep 4 && $scripts/screensaver &
+#exec $nsi onboard &
+
+# Font for window titles. Will also be used by the bar unless a different font
+# is used in the bar {} block below.
+font pango:xos4 Terminess Powerline 9px
+
+# Layout colors                 background          fg        border
+client.focused                  "#242C33" "#242C33" "#ff797b" "#242c33"
+client.focused_inactive         "#242C33" "#242c33" "#aaaaaa" "#242c33"
+client.unfocused                "#242c33" "#242c33" "#aaaaaa" "#242c33"
+client.urgent                   "#242C33" "#242c33" "#fd9c17"
+client.background "#242C33"
+
+
+################
+# Key Bindings #
+################
+bindsym    $mod+r                 restart
+bindsym    $mod+c                 kill
+
+bindsym XF86MonBrightnessUp exec "light -A 5;"
+bindsym XF86MonBrightnessDown exec "light -U 5;" 
+
+
+bindsym    $mod+Return            exec $nsi terminator
+bindsym    $alt+d          		  exec albert show
+bindsym    $mod+Shift+Return      exec $nsi terminator -e tmux 
+bindsym    $mod+$alt+f            exec $nsi urxvt -title "ranger [#]" -e sudo ranger
+bindsym    $mod+Control+u         exec $nsi "urxvt -title updating -e yaourt -Syyua --noconfirm && i3-msg restart"
+bindsym    $mod+n                 exec $nsi urxvt -title music -e ncmpcpp
+bindsym $r $mod+t                 exec $nsi urxvt -title Mail -e mutt
+bindsym    $mod+p                 exec $nsi thunar
+bindsym    $mod+$alt+p            exec $nsi sudo thunar
+bindsym    Control+k              exec $nsi kodi
+bindsym    XF86Suspend            exec $nsi $scripts/screensaver-toogle
+
+bindsym    Control+Shift+Down     exec $nsi $scripts/dvol2 -d 5
+bindsym    Control+Shift+Up       exec $nsi $scripts/dvol2 -i 5
+bindsym    Control+Shift+minus    exec $nsi $scripts/dvol2 -t
+
+bindsym    $alt+Up                exec $nsi mpc toggle
+bindsym    $alt+Down              exec $nsi mpc stop
+bindsym    $alt+Left              exec $nsi mpc prev
+bindsym    $alt+Right             exec $nsi mpc next
+bindsym    $mod+$alt+Down         exec $nsi mpc random
+
+bindsym $r $mod+Shift+x           exec $nsi class
+bindsym $r $mod+x                 exec $nsi xkill
+bindsym $r Print                  exec $nsi $scripts/screenshot.sh
+bindsym $r $alt+m                 exec $nsi dmenu_run -nb '#242C33' -nf '#bbbbbb' -sf '#8badf9' -sb '#242C33' -fn 'xos4 Terminess Powerline' -f -h 16 -p 'run application:'
+bindsym $r $alt+n                 exec $nsi sudo dmenu_run -nb '#242C33' -nf '#bbbbbb' -sf '#ff797b' -sb '#242C33' -fn 'xos4 Terminess Powerline' -f -h 16 -p 'run application as root:'
+#bindsym $r $mod+$alt+space        exec $nsi xfce4-appfinder
+bindsym $r $mod+$alt+space       exec $nsi j4-dmenu-desktop --dmenu="dmenu -nb '#242C33' -nf '#bbbbbb' -sf '#8badf9' -sb '#242C33' -fn 'tewi' -f -h 16 -p 'run application:'" --term="urxvt"
+# }}}
+# {{{ Info
+bindsym $alt+space mode "$mode_info"
+set $mode_info (b)at, (c)al, (d)isk, (i)p, (t)emp, (u)pdates
+mode "$mode_info" {
+        bindsym $r t exec $nsi $scripts/info temp,      mode "default"
+        bindsym $r d exec $nsi $scripts/info disk,      mode "default"
+        bindsym $r i exec $nsi $scripts/info ip,        mode "default"
+        bindsym $r c exec $nsi $scripts/info cal,       mode "default"
+        bindsym $r b exec $nsi $scripts/info bat,       mode "default"
+        bindsym $r u exec $nsi $scripts/info updates,   mode "default"
+    
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+
+# kill focused window
+bindsym $mod+Shift+q kill
+
+bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $r $alt+Tab exec $nsi rofi -show window -font "xos4 Terminess Powerline 13" -fg "#bbbbbb" -bg "#242c33" -hlfg "#ffffff" -hlbg "#c64742" -o 10 -hide-scrollbar -separator-style solid -line-margin 3 -bw 1 -bc "#565656" -width 300 -bg-active "#242c33" -fg-active "#258ad1" -hlfg-active "#ffffff" -bghl-active "258ad1"  
+bindsym $r $mod+$alt+m exec $nsi rofi -show run -font "xos4 Terminess Powerline 13" -fg "#bbbbbb" -bg "#242c33" -hlfg "#ffffff" -hlbg "#c64742" -o 10 -hide-scrollbar -separator-style solid -line-margin 3 -bw 1 -bc "#565656" -width 300 -bg-active "#242c33" -fg-active "#258ad1" -hlfg-active "#ffffff" -bghl-active "258ad1" 
+
+# change focus
+bindsym $mod+j focus left
+bindsym $mod+k focus down
+bindsym $mod+l focus up
+bindsym $mod+semicolon focus right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+#naviagation
+bindsym Control+$mod+Right workspace next
+bindsym Control+$mod+Left workspace prev
+bindsym $mod+Shift+y move absolute position center
+
+# move focused window
+bindsym $mod+Shift+j move left
+bindsym $mod+Shift+k move down
+bindsym $mod+Shift+l move up
+bindsym $mod+Shift+semicolon move right
+
+# alternatively, you can use the cursor keys:
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# split in horizontal orientation
+bindsym $mod+h split h
+
+# split in vertical orientation
+bindsym $mod+v split v
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+a focus parent
+
+# focus the child container
+#bindsym $mod+d focus child
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        
+        bindsym j resize shrink width 10 px or 10 ppt
+        bindsym k resize grow height 10 px or 10 ppt
+        bindsym l resize shrink height 10 px or 10 ppt
+        bindsym semicolon resize grow width 10 px or 10 ppt
+
+        # same bindings, but for the arrow keys
+        bindsym Left resize shrink width 10 px or 10 ppt
+        bindsym Down resize grow height 10 px or 10 ppt
+        bindsym Up resize shrink height 10 px or 10 ppt
+        bindsym Right resize grow width 10 px or 10 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $alt+r mode "resize"
+########
+# exit #
+########
+bindsym $alt+q mode "$mode_system"
+set $mode_system (l)ock, (e)xit, (r)eboot, (q)uit
+mode "$mode_system" {
+    bindsym l exec $nsi $scripts/i3exit lock, mode "default"
+    bindsym e exec $nsi $scripts/i3exit logout, mode "default"
+    bindsym r exec $nsi $scripts/i3exit reboot, mode "default"
+    bindsym q exec $nsi $scripts/i3exit shutdown, mode "default"
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+#######
+# BAR #
+#######
+
+bar{	
+	#status_command i3status
+	i3bar_command /usr/bin/i3bar
+	#status_command exec $scripts/i3barconky
+	tray_output none
+	status_command bumblebee-status -m getcrypto github weather brightness date time pasink pasource pacman -p root.path=/ time.format="%I:%M %P " date.format="%a, %b %d %Y" github.token="a26e6776565c1d3d341cfe895421b9a715fa100a" -t solarized-powerline
+	font pango: xos4 Terminess Powerline, Icon 9
+	        position top
+	        colors {
+	            background          "#242C33"
+	            statusline          "#ecedee"
+	            separator           "#242c33"
+	            focused_workspace   "#242c33" "#C64742" "#CACACA"
+	            active_workspace    "#242c33" "#242c33" "#797979" 
+	            inactive_workspace  "#242c33" "#242c33" "#CACACA"
+	            urgent_workspace    "#242c33" "#242c33" "#ff9d17" #"#f3ea0c"
+	}
+}
+
+bar{
+	workspace_buttons no	
+	status_command bumblebee-status -m cmus xrandr caffeine nic cpu memory battery -p root.path=/ -t solarized-powerline
+	font pango: xos4 Terminess Powerline, Icon 9
+	        position bottom
+	        colors {
+	            background          "#242C33"
+	            statusline          "#ecedee"
+	            separator           "#242c33"
+	            focused_workspace   "#242c33" "#C64742" "#CACACA"
+	            active_workspace    "#242c33" "#242c33" "#797979" 
+	            inactive_workspace  "#242c33" "#242c33" "#CACACA"
+	            urgent_workspace    "#242c33" "#242c33" "#ff9d17" #"#f3ea0c"
+	}
+}
+
+                                                        
+bindsym $mod+shift+x exec /home/xeon/lock/lock&
+
+# Titlebars
+new_window 1pixel
+#new_window normal
+new_float normal
+#bindsym $mod+t border normal
+#bindsym $mod+y border 1pixel
+#bindsym $mod+u border none
+bindsym $mod+y exec $nsi i3-msg border toggle
+
+
+#audio bindings
+#bindsym XF86AudioRaiseVolume exec amixer -q set Master 5%+ unmute  
+#bindsym XF86AudioLowerVolume exec amixer -q set Master 5%- unmute  
+#bindsym XF86AudioMute exec amixer -q set Master mute  
+#bindsym XF86AudioPlay exec playerctl play-pause  
+#bindsym XF86AudioNext exec playerctl next  
+#bindsym XF86AudioPrev exec playerctl previous 
+
+# Pulse A6udio controls
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5% 
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+#wallpaper
+exec_always feh --bg-fill /home/xeon/Pictures/bashmug.png
+
+#pamac fix
+exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & eval $(gnome-keyring-daemon -s --components=pkcs11,secrets,ssh,gpg) &
+
+##############
+# Workspaces #
+##############
+set $WS1 1:
+set $WS2 2:
+set $WS3 3:
+set $WS4 4:
+set $WS5 5:
+set $WS6 6:
+set $WS7 7:
+set $WS8 8:
+set $WS9 9:
+set $WS10 10:
+
+# switch to workspace
+bindsym $mod+1 workspace $WS1
+bindsym $mod+2 workspace $WS2
+bindsym $mod+3 workspace $WS3
+bindsym $mod+4 workspace $WS4
+bindsym $mod+5 workspace $WS5
+bindsym $mod+6 workspace $WS6
+bindsym $mod+7 workspace $WS7
+bindsym $mod+8 workspace $WS8
+bindsym $mod+9 workspace $WS9
+bindsym $mod+0 workspace $WS10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace $WS1
+bindsym $mod+Shift+2 move container to workspace $WS2
+bindsym $mod+Shift+3 move container to workspace $WS3
+bindsym $mod+Shift+4 move container to workspace $WS4
+bindsym $mod+Shift+5 move container to workspace $WS5
+bindsym $mod+Shift+6 move container to workspace $WS6
+bindsym $mod+Shift+7 move container to workspace $WS7
+bindsym $mod+Shift+8 move container to workspace $WS8
+bindsym $mod+Shift+9 move container to workspace $WS9
+bindsym $mod+Shift+0 move container to workspace $WS10
+
+###################
+# workspace rules #
+###################
+assign [class="URxvt"]                                      $WS1
+assign [class="Termite"]                                    $WS1
+assign [class="Firefox"]                                    $WS2
+#assign [class="chromium"]                                   $WS2
+assign [class="Thunar"]                                     $WS3
+assign [title="ranger"]                                     $WS3
+assign [instance="crx_ioekoebejdcmnlefjiknokhhafglcjdl"]    $WS3
+assign [instance="crx_apdfllckaahabafndbhieahigkjlhalf"]    $WS3
+assign [class="Thunderbird"]                                $WS4
+assign [title="Messenger"]                                  $WS4
+assign [instance="crx_bgkodfmeijboinjdegggmkbkjfiagaan"]    $WS4
+assign [class="Telegram"]                                   $WS4
+assign [class="Skype"]                                      $WS4
+assign [class="Franz"]                                      $WS4
+assign [class="Viewnior"]                                   $WS5
+assign [class="Et"]                                         $WS5
+assign [class="Gpicview"]                                   $WS5
+assign [class="Gimp"]                                       $WS5
+assign [class="Shotwell"]                                   $WS5
+assign [instance="crx_iegjdjcmfimekjidjffaddhgolgclmcf"]    $WS5
+assign [instance="crx_ebkimgohghnhicaeajobmnbmgelgfcbc"]    $WS5
+assign [instance="crx_nmkdidpgfemfnijimfoophcplgogbacp"]    $WS6
+assign [instance="crx_blpcfgokakmgnkcojhhkbfbldkacnbeo"]    $WS6
+assign [title="vGet Cast"]                                  $WS6
+assign [class="mplayer2"]                                   $WS6
+assign [class="Vlc"]                                        $WS6
+assign [instance="crx_icocmgpofpimcojhefbcfbdldkmndpgj"]    $WS6
+assign [class="Gtk-recordMyDesktop"]                        $WS6
+assign [class="bomi"]                                       $WS6
+assign [class="mpv"]                                        $WS6
+assign [class="guvcview"]                                   $WS6
+assign [class="Pulseaudio-equalizer.py"]                    $WS7
+assign [title="Deezer Shortcut"]                            $WS7
+assign [instance="crx_icppfcnhkcmnfdhfhphakoifcfokfdhg"]    $WS7
+assign [instance="crx_cbiapabbjlfcbfoedilflhnifandagoh"]    $WS7
+assign [instance="crx_ahnjfaipcnkkaepmlkobfohnlmdpfflm"]    $WS7
+assign [instance="crx_hhkolpgedpldcfmkgbdokgiljfbblpfj"]    $WS7
+assign [instance="crx_jhgkinonbcanhcglhghmagakkaomeiaj"]    $WS7
+assign [class="Pragha"]                                     $WS7
+assign [class="Anoise.py"]                                  $WS7
+assign [class="nuvolaplayer3"]                              $WS7
+assign [class="nuvolaplayer3-deezer"]                       $WS7
+assign [class="nuvolaplayer3-google-play-music"]            $WS7
+assign [class="keepassx"]                                   $WS8
+assign [class="Unetbootin.elf"]                             $WS8
+assign [class="Catfish"]                                    $WS8
+assign [instance="libreoffice"]                             $WS8
+assign [class="VirtualBox"]                                 $WS8
+assign [class="sublime_text"]                               $WS8
+assign [class="Zathura"]                                    $WS8
+assign [class="Pamac-updater"]                              $WS8
+assign [class="Pamac-manager"]                              $WS8
+assign [class="Galculator"]                                 $WS8
+assign [class="XCalc"]                                      $WS8
+assign [class="XFontSel"]                                   $WS8
+assign [class="Nitrogen"]                                   $WS8
+assign [class="Ssvnc.tcl"]                                  $WS8
+assign [class="Ssvnc"]                                      $WS8
+assign [class="qt5ct"]                                      $WS9
+assign [class="Xfce4-taskmanager"]                          $WS9
+assign [class="Onboard-settings"]                           $WS9
+assign [title="2048"]                                       $WS9
+#assign [class="Xfce4-panel"]                                $WS9
+assign [instance="crx_ccbhekjfmokgloklnjnidfhlaofegeno"]    $WS9
+assign [instance="crx_lneaknkopdijkpnocmklfnjbeapigfbh"]    $WS9
+assign [instance="crx_dokhhdohljjhoojogddojcpblnplacca"]    $WS9
+assign [instance="crx_hhjdhphdahdiegkachmnakmdbikakplo"]    $WS9
+assign [instance="crx_hkgndiocipalkpejnpafdbdlfdjihomd"]    $WS9
+assign [instance="crx_aiahmijlpehemcpleichkcokhegllfjl"]    $WS9
+assign [instance="crx_edebbhkhcaafmolanelponjjanocpacd"]    $WS9
+assign [class="Kodi"]                                       $WS10
+
+for_window [class="URxvt"]                                  focus
+for_window [class="Termite"]                                floating enable, move absolute center
+for_window [title="Preferenze Thunderbird"]                 floating enable, border normal, move absolute center
+for_window [class="chromium"]                               focus
+#for_window [class="Keepassx"]                               focus
+for_window [class="Firefox"]                                focus
+for_window [class="Thunar"]                                 focus
+for_window [class="Gpicview"]                               focus
+for_window [class="Shotwell"]                               focus
+for_window [class="Gimp"]                                   focus
+for_window [class="Zathura"]                                focus
+for_window [class="sublime_text"]                           focus
+for_window [class="mplayer2"]                               focus
+for_window [class="Vlc"]                                    focus
+for_window [class="bomi"]                                   focus
+for_window [class="mpv"]                                    focus
+for_window [class="Franz"]                                  focus
+for_window [class="Opera"]                                  focus
+for_window [class="Pragha"]                                 focus
+for_window [instance="libreoffice"]                         focus
+for_window [class="Xfce4-taskmanager"]                      focus
+for_window [class="nuvolaplayer3"]                          focus
+for_window [class="Et"]                                     focus
+for_window [title="Deezer Shortcut"]                        focus
+for_window [class="nuvolaplayer3-deezer"]                   focus
+for_window [class="nuvolaplayer3-google-play-music"]        focus
+for_window [instance="crx_lneaknkopdijkpnocmklfnjbeapigfbh"] focus
+for_window [instance="crx_bgkodfmeijboinjdegggmkbkjfiagaan"] focus
+for_window [instance="crx_ioekoebejdcmnlefjiknokhhafglcjdl"] focus
+for_window [instance="crx_apdfllckaahabafndbhieahigkjlhalf"] focus
+for_window [instance="crx_blpcfgokakmgnkcojhhkbfbldkacnbeo"] focus
+for_window [instance="crx_dokhhdohljjhoojogddojcpblnplacca"] focus
+for_window [instance="crx_nmkdidpgfemfnijimfoophcplgogbacp"] focus
+for_window [instance="crx_icppfcnhkcmnfdhfhphakoifcfokfdhg"] focus
+for_window [instance="crx_cbiapabbjlfcbfoedilflhnifandagoh"] focus
+for_window [instance="crx_ahnjfaipcnkkaepmlkobfohnlmdpfflm"] focus
+for_window [instance="crx_hhkolpgedpldcfmkgbdokgiljfbblpfj"] focus
+for_window [instance="crx_jhgkinonbcanhcglhghmagakkaomeiaj"] focus
+for_window [instance="crx_hhjdhphdahdiegkachmnakmdbikakplo"] focus
+for_window [instance="crx_iegjdjcmfimekjidjffaddhgolgclmcf"] focus
+for_window [instance="crx_ebkimgohghnhicaeajobmnbmgelgfcbc"] focus
+for_window [instance="crx_hkgndiocipalkpejnpafdbdlfdjihomd"] focus
+for_window [instance="crx_aiahmijlpehemcpleichkcokhegllfjl"] focus
+for_window [instance="crx_edebbhkhcaafmolanelponjjanocpacd"] focus
+for_window [instance="crx_ccbhekjfmokgloklnjnidfhlaofegeno"] floating enable, border normal, focus, move absolute center
+for_window [window_role="pop-up"]                           floating enable
+for_window [instance="spotify"]                             focus, border normal
+for_window [class="CALENDAR"]                               floating enable, border 1px, focus
+for_window [class="YADWIN"]                                 floating enable, border 1px, focus
+for_window [title="vGet Cast"]                              floating enable, focus, border normal
+#for_window [class="Kodi"]                                   fullscreen enable, focus, border none
+for_window [class="Kodi"]                                   focus, border none
+#for_window [class="9menu"]                                  focus, border none, move absolute position 1265 px 24 px
+for_window [class="9menu"]                                  focus, border none, move absolute position 1232 px 24 px
+#for_window [class="9menu"]                                  focus, border none, move absolute position 1250 px 24 px
+for_window [class="Xfce4-appfinder"]                        border 1px, focus, move absolute center
+for_window [class="Xfrun4"]                                 floating enable, border 1px, focus, move absolute center
+for_window [class="Catfish"]                                floating enable, border 1px, focus, move absolute center
+for_window [class="Anoise.py"]                              floating enable, border normal, move absolute position 1241 px 569 px
+for_window [class="Guvcview"]                               floating enable, border normal, move absolute center
+for_window [class="Gtk-recordMyDesktop"]                    floating enable, border normal, focus, move absolute center
+for_window [class="Pulseaudio-equalizer.py"]                floating enable, border normal, focus, move absolute center
+for_window [instance="Abp"]                                 floating enable, border normal, focus, move absolute center
+for_window [title="2048"]                                   floating enable, border normal, focus, move absolute center
+for_window [instance="crx_icocmgpofpimcojhefbcfbdldkmndpgj"] floating enable, border normal, focus, move absolute center
+for_window [instance="Toplevel"]                            floating enable, border normal, focus, move absolute center
+for_window [instance="Places"]                              floating enable, border normal, focus, move absolute center
+for_window [instance="Zoompage-options"]                    floating enable, border normal, focus, move absolute center
+for_window [class="Xfce4-panel"]                            floating enable, border 1px, focus, sticky, ontop, move absolute center
+for_window [class="Pamac-updater"]                          floating enable, border normal, focus, move absolute center
+for_window [class="Pamac-manager"]                          floating enable, border normal, focus, move absolute center
+for_window [class="Onboard"]                                floating enable, border none
+for_window [class="Onboard-settings"]                       floating enable, border normal, focus, move absolute center
+for_window [class="Unetbootin.elf"]                         floating enable, border normal, focus, move absolute center
+for_window [class="Nitrogen"]                               floating enable, border normal, focus, move absolute center
+for_window [class="Polkit-gnome-authentication-agent-1"]    floating enable, border normal, focus, move absolute center
+for_window [class="Lxappearance"]                           floating enable, border normal, focus, move absolute center
+for_window [class="Pavucontrol"]                            floating enable, border normal, focus, move absolute center
+for_window [class="Galculator"]                             floating enable, border normal, focus, move absolute center
+for_window [class="XCalc"]                                  floating enable, border normal, focus, move absolute center
+for_window [instance="DTA"]                                 floating enable, border normal, focus, move absolute center
+for_window [class="qt5ct"]                                  floating enable, border normal, focus, move absolute center
+for_window [class="guvcview"]                               floating enable, border normal, focus, move absolute center
+for_window [class="Telegram"]                               border normal, focus, move absolute center
+for_window [class="Xarchiver"]                              floating enable, border normal, focus, move absolute center
+for_window [class="Plank"]                                  floating enable, border 1px, focus, move absolute center
+for_window [window_role="Msgcompose"]                       floating enable, border normal, focus, move absolute center
+for_window [class="Xmessage"]                               floating enable, focus, move absolute center
+for_window [class="XFontSel"]                               floating enable, focus, move absolute center
+for_window [class="Ssvnc.tcl"]                              floating enable, focus, move absolute center
+for_window [class="Ssvnc"] 									floating enable, focus, move absolute center
